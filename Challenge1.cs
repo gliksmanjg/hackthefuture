@@ -1,4 +1,6 @@
-﻿namespace Hack_The_Future;
+﻿using System.Text.Json;
+
+namespace Hack_The_Future;
 
 public class Challenge1
 {
@@ -10,9 +12,31 @@ public class Challenge1
         {
             BaseAddress = new Uri("https://exs-htf-2025.azurewebsites.net")
         };
-        
+
         client.DefaultRequestHeaders.Add("Authorization", "team " + apiKey);
-        string res = client.GetAsync("/api/challenges/signal").Result.Content.ReadAsStringAsync().Result;
-        Console.WriteLine(res);
+        HttpResponseMessage res = client.GetAsync("/api/challenges/signal?isTest=true").Result;
+        string json = res.Content.ReadAsStringAsync().Result;
+        SignalResponse signalResponse = JsonSerializer.Deserialize<SignalResponse>(json);
+
+        Console.WriteLine($"Encrypted: {signalResponse.CipherText}");
+        string deciphered = decipher(signalResponse.CipherText, signalResponse.Shift);
+        Console.WriteLine($"Decrypted: {deciphered}");
+    }
+
+    private static string decipher(string input, int shift)
+    {
+        string res = string.Empty;
+        foreach (char c in input)
+        {
+            if (char.IsLetter(c))
+            {
+                res += (char) (c + shift);
+            }
+            else
+            {
+                res += c;
+            }
+        }
+        return res;
     }
 }
