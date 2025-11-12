@@ -19,11 +19,11 @@ public class Challenge1
         SignalResponse signalResponse = JsonSerializer.Deserialize<SignalResponse>(json);
 
         Console.WriteLine($"Encrypted: {signalResponse.CipherText}");
-        string deciphered = decipher(signalResponse.CipherText, signalResponse.Shift);
-        Console.WriteLine($"Decrypted: {deciphered}");
+        string decrypted = Decrypt(signalResponse.CipherText, signalResponse.Shift);
+        Console.WriteLine($"Decrypted: {decrypted}");
     }
 
-    private static string decipher(string input, int shift)
+    private static string Decrypt(string input, int shift)
     {
         string res = string.Empty;
         foreach (char c in input)
@@ -39,4 +39,6 @@ public class Challenge1
         }
         return res;
     }
+    
+    
 }
