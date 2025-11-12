@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Net;
+using System.Text;
+using System.Text.Json;
 
 namespace Hack_The_Future;
 
@@ -15,10 +17,15 @@ public class Challenge1
 
         client.DefaultRequestHeaders.Add("Authorization", "team " + apiKey);
         HttpResponseMessage res = client.GetAsync("/api/challenges/signal").Result;
-        string json = res.Content.ReadAsStringAsync().Result;
-        SignalResponse signalResponse = JsonSerializer.Deserialize<SignalResponse>(json);
+        string receivedJson = res.Content.ReadAsStringAsync().Result;
+        SignalResponse signalResponse = JsonSerializer.Deserialize<SignalResponse>(receivedJson)!;
 
         string decrypted = Decrypt(signalResponse.CipherText, signalResponse.Shift);
+
+        string jsonToSend = JsonSerializer.Serialize(new {answer = decrypted});
+        StringContent requestBody = new StringContent(jsonToSend, Encoding.UTF8, "application/json");
+        
+        client.PostAsync("/api/challenges/signal", requestBody).Result.EnsureSuccessStatusCode();
         
         Console.WriteLine($"Encrypted: {signalResponse.CipherText}");
         Console.WriteLine($"Decrypted: {decrypted}");
