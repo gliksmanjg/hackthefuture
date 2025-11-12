@@ -4,7 +4,7 @@ public class Challenge1
 {
     public static void Main()
     {
-        string apiKey = File.ReadAllText(@"key.txt");
+        string apiKey = File.ReadAllText("key.txt");
         
         HttpClient client = new HttpClient()
         {
